@@ -1,0 +1,14 @@
+{
+    "token": "TOKEN_DU_BOT",
+    "color": "#2f3136",
+    "prefix": "!",
+    "support": "https://discord.gg/invite",
+    "presence": {
+        "status": "online",
+        "type": 0,
+        "name": "▸ Crow Bots",
+        "url": "https://twitch.tv/exemple"
+    },
+    "buyer": "ID_DISCORD_DU_BUYER",
+    "owners": []
+}

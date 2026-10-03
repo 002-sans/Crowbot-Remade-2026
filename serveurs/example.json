@@ -1,0 +1,325 @@
+{
+    "prefix": "+",
+    "color": "FFFFFF",
+
+    "clearlimit": "500",
+
+    "perms": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": [],
+        "7": [],
+        "8": [],
+        "9": [],
+        "change": {},
+        "supp": {},
+        "no": []
+    },
+
+    "logs": {
+        "no": [],
+        "raid": null,
+        "roles": null,
+        "voices": null,
+        "update": null,
+        "boosts": null,
+        "embeds": null,
+        "messages": null,
+        "moderation": null,
+        "mods": {
+            "warn": true,
+            "mute": true,
+            "tempmute": true,
+            "unmute": true,
+            "kick": true, 
+            "ban": true,
+            "tempban": true,
+            "unban": true,
+            "temprole": true,
+            "antilink": true,
+            "antispam": true,
+            "antimassmention": true,
+            "badwords": true,
+            "note": false,
+            "strike": true,
+            "verif": true,
+            "voicekick": false,
+            "clear": false,
+            "renew": false
+        }
+    },
+    "antiraid": {
+        "antispam": {
+            "max": false,
+            "etat": true,
+            "nombre": "7",
+            "durée": 10000
+        },
+        "antimassmention": {
+            "max": false,
+            "etat": true,
+            "punish": null,
+            "nombre": 4
+        },
+        "antichannel": {
+            "max": false,
+            "etat": true,
+            "punish": null
+        },
+        "antirole": {
+            "max": false,
+            "etat": true,
+            "punish": null
+        },
+        "antibot": {
+            "max": false,
+            "etat": true,
+            "punish": null
+        },
+        "antiban": {
+            "max": false,
+            "etat": true,
+            "punish": null,
+            "nombre": 0,
+            "durée": 10000
+        },
+        "antitoken": {
+            "etat": true,
+            "punish": null,
+            "nombre": 5,
+            "durée": 10000
+        },
+        "antiunban": {
+            "max": false,
+            "etat": true,
+            "punish": null
+        },
+        "antikick": {
+            "max": false,
+            "etat": true,
+            "punish": null
+        },
+        "antiwebhook": {
+            "max": false,
+            "etat": true,
+            "punish": null
+        },
+        "antiupdate": {
+            "max": false,
+            "etat": true,
+            "punish": null
+        },
+        "antiemote": {
+            "max": false,
+            "etat": true,
+            "punish": null
+        },
+        "antisticker": {
+            "max": false,
+            "etat": true,
+            "punish": null
+        },
+        "antieveryone": {
+            "max": false,
+            "etat": true,
+            "punish": null,
+            "type": "delete"
+        },
+        "antilink": {
+            "max": false,
+            "etat": true,
+            "punish": null,
+            "type": "all"
+        },
+        "antirank": {
+            "max": false,
+            "etat": true,
+            "punish": null
+        },
+        "antideco": {
+            "max": false,
+            "etat": false,
+            "punish": null,
+            "nombre": 5,
+            "durée": 10000
+        },
+        "antimove": {
+            "max": false,
+            "etat": false,
+            "punish": null,
+            "nombre": 5,
+            "durée": 10000
+        },
+        "crealimit": 86400000,
+        "punish": "derank",
+        "noderank": [],
+        "roles": []
+    },
+
+    "snipe": {
+        "delete_cmd": false,
+        "delete_rep": false,
+        "mod_cmd": false,
+        "mod_rep": false
+    },
+
+    "timeout": true,
+    "muterole": null,
+    "banclear": null,
+    "raidping": [],
+    "ancien": 604800000,
+    "strikes": {
+        "nouveau": {
+            "antilink": 1,
+            "antispam": 1,
+            "antimassmention": 1,
+            "badwords": 1
+        },
+        "ancien": {
+            "antilink": 1,
+            "antispam": 1,
+            "antimassmention": 1,
+            "badwords": 1
+        }
+    },
+    "strikepunish": [],
+    "memberstrikes": {},
+    "blrank": {
+        "etat": false,
+        "max": false,
+        "type": "danger",
+        "users": []
+    },
+    "reminders": [],
+    "customs": {},
+    "temproles": [],
+    "aliases": {},
+    "helptype": "button",
+    "helpalias": false,
+    "securinvite": false,
+    "suggestions": {
+        "channel": null,
+        "actif": false,
+        "list": []
+    },
+    "formulaires": [],
+    "modmail": {
+        "actif": false,
+        "guildId": null,
+        "category": null,
+        "logs": null,
+        "open": []
+    },
+    "report": {
+        "actif": false,
+        "channel": null
+    },
+    "showpics": {
+        "actif": false,
+        "channel": null
+    },
+    "autobackup": {
+        "serveur": 0,
+        "emoji": 0
+    },
+    "mpsettings": {
+        "actif": true
+    },
+
+    "autopublish": true,
+    "backups_emojis": [],
+    "soutiens": {
+        "actif": false,
+        "text": [],
+        "role": null,
+        "only_status": false,
+        "blrole": false,
+        "blroles": [],
+        "roles_obligatoires": false,
+        "roles": [],
+        "twitch": false,
+        "twitchping": [],
+        "logs": null
+    },
+
+    "joinsettings": {
+        "actif": false,
+        "channel": null,
+        "message": null,
+        "dmactif": false,
+        "dm": null,
+        "ghostping": false,
+        "ghostchannels": [],
+        "autorole": [],
+        "security": 3,
+        "captcha": {
+            "enabled": false,
+            "messageId": null,
+            "channelId": null,
+            "buttonLabel": "Entrez un mot de passe",
+            "emoji": "🔐",
+            "style": 1,
+            "duration": 300000,
+            "roleId": null,
+            "pending": {}
+        },
+        "memberRole": null
+    },
+
+    "leavesettings": {
+        "actif": false,
+        "channel": false,
+        "message": false,
+        "delete": 0
+    },
+
+    "public": {
+        "etat": true,
+        "channels": [],
+        "disabled": []
+    },
+
+    "warns": [],
+    "tempban": [],
+    "autoreact": [],
+    "tempcmute": [],
+    "inviter": [],
+    "invites": {},
+    "counters": [],
+    "rolemenu": [],
+    "chtempvoc": [],
+    "tempvocChannels": {},
+    "tempvocActions": {},
+    "piconly": [],
+    "notes": {},
+    "locknames": {},
+    "autothreads": [],
+    "badwords": false,
+    "badword": [],
+    "whitelist": [],
+    "owners": [],
+    "tickets": {
+        "panelChannelId": null,
+        "message": null,
+        "type": "buttons",
+        "claim": false,
+        "autoclaim": false,
+        "autodelete": true,
+        "maxPerUser": 1,
+        "leave": false,
+        "afk": false,
+        "claim_button": false,
+        "close_button": true,
+        "transcripts": false,
+        "roles_req": [],
+        "roles_ban": [],
+        "supportRoles": [],
+        "options": [],
+        "open": []
+    },
+    "ticketPanels": [],
+    "giveawaySettings": {}
+}
