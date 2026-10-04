@@ -57,7 +57,11 @@ client.resolvers = require('./utiles/resolvers');
 client.resolveMembers = (guild, input, mentions) => client.resolvers.resolveMembers(guild, input, mentions);
 client.resolveRoles = (guild, input, mentions) => client.resolvers.resolveRoles(guild, input, mentions);
 client.resolveChannels = (guild, input, mentions) => client.resolvers.resolveChannels(guild, input, mentions);
-client.cleanInput = (str) => client.resolvers.cleanInput(str);
+client.cleanInput = (str) => client.resolvers.cleanInput(str).map((p) => {
+    const id = client.resolvers.extractId(p);
+    return /^\d{17,20}$/.test(String(id)) ? String(id) : p;
+});
+client.collectUserIds = (message, text) => client.resolvers.collectUserIds(message, text);
 client.invites  = new InviteManager(client);
 client.config   = require('./config.json');
 client.snipes   = new Discord.Collection();

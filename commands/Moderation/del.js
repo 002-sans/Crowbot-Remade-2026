@@ -19,7 +19,7 @@ module.exports = {
         const db = client.get(message.guildId);
 
         if (args[0] == "perm") {
-            const isOwner = client.config.owners.includes(message.author.id) || client.config.buyer === message.author.id;
+            const isOwner = (client.config.owners || []).includes(message.author.id) || client.config.buyer === message.author.id;
             if (!client.perm(8, message.author.id, message.channel.id, message.guild) && !isOwner) return;
             const { removePerm } = require('../../utiles/perms');
             if (!args[1] || !args[2]) {

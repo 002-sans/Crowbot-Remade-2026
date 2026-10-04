@@ -202,11 +202,28 @@ function splitArgumentGroups(fullArgsText, groupCount = 2) {
     return parts;
 }
 
+/**
+ * Collecte les IDs utilisateur depuis du texte + mentions du message.
+ * @param {import('discord.js').Message} message
+ * @param {string} [text]
+ * @returns {string[]}
+ */
+function collectUserIds(message, text = "") {
+    const ids = new Set();
+    for (const part of cleanInput(text)) {
+        const id = extractId(part);
+        if (/^\d{17,20}$/.test(String(id))) ids.add(String(id));
+    }
+    message?.mentions?.users?.forEach((u) => ids.add(u.id));
+    return [...ids];
+}
+
 module.exports = {
     cleanInput,
     extractId,
     resolveMembers,
     resolveRoles,
     resolveChannels,
-    splitArgumentGroups
+    splitArgumentGroups,
+    collectUserIds,
 };

@@ -19,7 +19,7 @@ module.exports = {
         const db = client.get(message.guildId);
 
         if (args[0] === 'invite') {
-            if (!client.config.owners.includes(message.author.id) && client.config.buyer !== message.author.id) return;
+            if (!(client.config.owners || []).includes(message.author.id) && client.config.buyer !== message.author.id) return;
             if (!['on', 'off'].includes(args[1])) return message.channel.send(`Utilisation: \`${db.prefix}secur invite <on/off>\``);
             client.config.securinvite = args[1] === 'on';
             client.saveConfig();

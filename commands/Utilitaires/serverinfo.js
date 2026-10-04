@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder, Client, Message } = require("discord.js");
+const { EmbedBuilder, Client, Message, GuildVerificationLevel } = require("discord.js");
 
 module.exports = {
     name: "serverinfo",
@@ -16,41 +16,45 @@ module.exports = {
     */
     async execute(client, message, args) {
         const db = client.get(message.guildId);
-        const owner = await message.guild.members.fetch(message.guild.ownerId);
+        const guild = message.guild;
+        const owner = await guild.members.fetch(guild.ownerId).catch(() => null);
+
+        await guild.members.fetch().catch(() => null);
+        const boosters = guild.members.cache.filter(m => m.premiumSince).size;
 
         const embed = new EmbedBuilder()
             .setColor(db.color)
             .setTitle(`Informations du serveur`)
-            .setThumbnail(message.guild.iconURL())
+            .setThumbnail(guild.iconURL())
             .setDescription(`\`🎩\`・**__Informations du serveur__**
-                > **Serveur**: \`${message.guild.name}\` (\`${message.guild.id}\`)
-                > **Propriétaire:** ${owner} (\`${owner.user.username}\` | \`${owner.id}\`)
-                > **Création du serveur** <t:${Math.round(message.guild.createdTimestamp / 1000)}:f> (<t:${Math.round(message.guild.createdTimestamp / 1000)}:R>)
-                > **Invitation personnalisée:** ${message.guild.vanityURLCode ? `\`${message.guild.vanityURLCode}\` (${message.guild.vanityURLUses} Utilisations)` : "`❌`"}
-                > **Description:** \`${message.guild.description ?? "❌"}\`
+                > **Serveur**: \`${guild.name}\` (\`${guild.id}\`)
+                > **Propriétaire:** ${owner ?? guild.ownerId} (\`${owner?.user?.username ?? "?"}\` | \`${guild.ownerId}\`)
+                > **Création du serveur** <t:${Math.round(guild.createdTimestamp / 1000)}:f> (<t:${Math.round(guild.createdTimestamp / 1000)}:R>)
+                > **Invitation personnalisée:** ${guild.vanityURLCode ? `\`${guild.vanityURLCode}\` (${guild.vanityURLUses ?? 0} utilisations)` : "`❌`"}
+                > **Description:** \`${guild.description ?? "❌"}\`
                 \`🍁\`・**__Statistiques du serveur__**
-                > **Nombre de membres:** \`${message.guild.memberCount} Membres\`
-                > **Nombre de salons:** \`${message.guild.channels.cache.size} Salons\`
-                > **Nombre de rôles:** \`${message.guild.roles.cache.size} Rôles\`
-                > **Nombre de boosts:** \`${message.guild.premiumSubscriptionCount} (${message.guild.members.cache.filter(m => m.premiumSince).size} Utilisateur)\`
-                > **Nombre d'émojis:** \`${message.guild.emojis.cache.size} emojis\`
-                > **Nombre de stickers:** \`${message.guild.stickers.cache.size} sticker\`
+                > **Nombre de membres:** \`${guild.memberCount} membres\`
+                > **Nombre de salons:** \`${guild.channels.cache.size} salons\`
+                > **Nombre de rôles:** \`${guild.roles.cache.size} rôles\`
+                > **Nombre de boosts:** \`${guild.premiumSubscriptionCount ?? 0} (${boosters} utilisateur(s))\`
+                > **Nombre d'émojis:** \`${guild.emojis.cache.size} emojis\`
+                > **Nombre de stickers:** \`${guild.stickers.cache.size} stickers\`
                 \`🌂\`・**__Paramètres du serveur__**
-                > **Niveau de vérification:** \`${verif(message.guild.verificationLevel)}\`
-                > **Barre des boosts:** \`${message.guild.premiumProgressBarEnabled ? "✅" : "❌"}\`
-                > **Salon du système:** ${message.guild.systemChannel ? `${message.guild.systemChannel} (\`${message.guild.systemChannel.name}\` | \`${message.guild.systemChannel.id}\`)` : "❌"}`.replaceAll('                ', ''))
+                > **Niveau de vérification:** \`${verif(guild.verificationLevel)}\`
+                > **Barre des boosts:** \`${guild.premiumProgressBarEnabled ? "✅" : "❌"}\`
+                > **Salon du système:** ${guild.systemChannel ? `${guild.systemChannel} (\`${guild.systemChannel.name}\` | \`${guild.systemChannel.id}\`)` : "❌"}`.replaceAll('                ', ''))
 
-                
-        message.channel.send({ embeds: [ embed ] })
+        message.channel.send({ embeds: [ embed ] });
     },
-}
+};
 
-function verif(type){
-    switch(type){
+function verif(level) {
+    switch (level) {
+        case GuildVerificationLevel.None: return "Aucune";
+        case GuildVerificationLevel.Low: return "Faible";
+        case GuildVerificationLevel.Medium: return "Normal";
+        case GuildVerificationLevel.High: return "Élevé";
+        case GuildVerificationLevel.VeryHigh: return "Maximum";
         default: return "Aucune";
-        case "Low": return "Faible";
-        case "Medium": return "Normal";
-        case "High": return "Elevé";
-        case "VeryHigh": return "Maximum"
     }
 }

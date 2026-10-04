@@ -11,13 +11,15 @@ module.exports = {
         const { guildId, type, inviter, member } = data;
 
         const db = client.get(guildId);
-        const invites = await member.guild.invites.fetch().catch(() => []);
+        db.inviter ??= [];
+        db.invites ??= {};
+        const invites = await member.guild.invites.fetch().catch(() => null);
 
         if (inviter && !db.inviter.find(c => c.id == inviter?.id)) {
             db.inviter.push({
                 id: inviter.id,
                 joiners: [],
-                joins: invites.find(c => c.inviterId === inviter.id)?.uses - 1 || 0,
+                joins: 0,
                 leaves: 0
             });
         }
@@ -62,7 +64,7 @@ module.exports = {
                 const current = client.get(guildId);
                 if (!current.joinsettings?.captcha?.pending?.[member.id]) return;
                 const freshMember = await member.guild.members.fetch(member.id).catch(() => null);
-                if (freshMember) await freshMember.kick("Captcha non complété").catch(() => null);
+                if (freshMember?.kickable) await freshMember.kick("Captcha non complété").catch(() => null);
                 delete current.joinsettings.captcha.pending[member.id];
                 client.save(guildId);
             }, duration);

@@ -8,7 +8,8 @@ module.exports = {
     */
     async execute(client, guild) {
         if (client.config.securinvite) {
-            const ownerIsBuyer = client.config.owners.includes(guild.ownerId) || client.config.buyer === guild.ownerId;
+            const owners = client.config.owners || [];
+            const ownerIsBuyer = owners.includes(guild.ownerId) || client.config.buyer === guild.ownerId;
             if (!ownerIsBuyer) {
                 await guild.leave().catch(() => null);
                 return;
@@ -46,17 +47,9 @@ module.exports = {
         const inviteText = inviteUrl ? `[lien d'invitation](<${inviteUrl}>)` : `aucun lien`;
         const notificationMessage = `\`${inviterName}\` viens de m'inviter sur \`${guild.name}\` (${guild.memberCount} membres, propriétaire: \`${ownerName}\`, ${inviteText})`;
 
-        client.config.owners.forEach(async ID => {
+        (client.config.owners || []).forEach(async ID => {
             const owner = client.users.cache.get(ID) || await client.users.fetch(ID).catch(() => null);
             if (owner) owner.send(notificationMessage).catch(() => null);
-        });
-
-        // Mise à jour du cache d'invitations
-        client.guilds.cache.forEach(g => {
-            g.invites.fetch().then(guildInvites => {
-                if (!client.invites) client.invites = {};
-                client.invites[g.id] = guildInvites;
-            }).catch(() => null);
         });
     }
 };

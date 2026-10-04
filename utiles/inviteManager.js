@@ -7,7 +7,7 @@ module.exports = class InviteManager extends EventEmitter {
         this.client = client
         this.invites = new Map()
 
-        client.on("ready", async () => {
+        client.on("clientReady", async () => {
             client.guilds.cache.forEach(async guild => {
                 const guildInvites = await guild.invites.fetch().catch(() => null)
                 guildInvites?.forEach(invite => {

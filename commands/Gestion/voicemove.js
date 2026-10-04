@@ -18,7 +18,8 @@ module.exports = {
     async execute(client, message, args) {
 
         const channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[0]) || await message.guild.channels.fetch(args[0]).catch(() => null)
-        const channel2 = message.mentiosn.channels[1] || message.guild.channels.cache.get(args[1]) || await message.guild.channels.fetch(args[1])
+        const mentioned = [...message.mentions.channels.values()];
+        const channel2 = mentioned[1] || message.guild.channels.cache.get(args[1]) || await message.guild.channels.fetch(args[1]).catch(() => null)
         const channelType = [ 2, 13 ]
         
         if (!channel || !args[0] || !channelType.includes(channel.type)) return message.channel.send("Veuillez mentionner un salon vocal valide")
