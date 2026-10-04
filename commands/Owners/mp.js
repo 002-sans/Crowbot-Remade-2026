@@ -17,7 +17,7 @@ module.exports = {
     */
     async execute(client, message, args) {
         if (args[0] === 'settings') {
-            if (!client.config.owners.includes(message.author.id) && client.config.buyer !== message.author.id) return;
+            if (!(client.config.owners || []).includes(message.author.id) && client.config.buyer !== message.author.id) return;
             const db = client.get(message.guildId);
             if (!db.mpsettings) db.mpsettings = { actif: true };
             db.mpsettings.actif = !db.mpsettings.actif;

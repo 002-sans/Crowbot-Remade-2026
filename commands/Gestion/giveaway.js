@@ -240,27 +240,36 @@ module.exports = {
             if (interaction.customId === "giveaway_validate") {
                 await interaction.deferUpdate().catch(() => null);
                 const targetChannel = gs.channel ? message.guild.channels.cache.get(gs.channel) : message.channel;
-                if (!targetChannel) return message.channel.send("Salon invalide pour le giveaway.");
+                if (!targetChannel?.isTextBased?.()) return message.channel.send("Salon invalide pour le giveaway.");
 
-                const endTimestamp = Math.floor((Date.now() + (gs.durationMs || 36000000)) / 1000);
-                const gwEmbed = new EmbedBuilder()
-                    .setTitle(gs.gain && gs.gain !== "None" ? gs.gain : "🎉 GIVEAWAY 🎉")
-                    .setColor(parseColor(db.color))
-                    .setDescription(`Réagissez avec ${gs.emoji || "🎉"} pour participer !\n\n**Gagnants :** ${gs.winners || 1}\n**Se termine :** <t:${endTimestamp}:R> (<t:${endTimestamp}:f>)`)
-                    .setFooter({ text: db.footer || "ζ͜͡Crow Bots" });
+                const prize = gs.gain && gs.gain !== "None" ? gs.gain : "Giveaway";
+                const duration = gs.durationMs || ms("10h") || 36000000;
 
-                if (gs.mode === "reaction") {
-                    const sentGw = await targetChannel.send({ embeds: [gwEmbed] }).catch(() => null);
-                    if (sentGw) await sentGw.react(gs.emoji || "🎉").catch(() => null);
-                } else {
-                    const btn = new ButtonBuilder()
-                        .setCustomId("giveaway_participate")
-                        .setLabel(gs.buttonText && gs.buttonText !== "Aucun" ? gs.buttonText : "Participer")
-                        .setEmoji(gs.emoji || "🎉")
-                        .setStyle(ButtonStyle.Primary);
-                    await targetChannel.send({ embeds: [gwEmbed], components: [new ActionRowBuilder().addComponents(btn)] }).catch(() => null);
+                try {
+                    await client.giveawaysManager.start(targetChannel, {
+                        prize,
+                        duration,
+                        winnerCount: gs.winners || 1,
+                        hostedBy: message.author,
+                        reaction: gs.mode === "reaction" ? (gs.emoji || "🎉") : (gs.emoji || "🎉"),
+                        messages: {
+                            giveaway: gs.mode === "bouton" && gs.buttonText && gs.buttonText !== "Aucun"
+                                ? `🎉 ${gs.buttonText} 🎉`
+                                : undefined,
+                            inviteToParticipate: `Réagissez avec ${gs.emoji || "🎉"} pour participer !`,
+                            embedColor: parseColor(db.color),
+                            winMessage: `🎉 Félicitations {winners} ! Vous avez gagné **{this.prize}** !`,
+                            noWinner: "Giveaway annulé, aucun participant valide.",
+                            hostedBy: `Organisé par : {this.hostedBy}`,
+                            winners: "Gagnant(s)",
+                            endedAt: "Terminé le",
+                        },
+                    });
+                    return message.channel.send(`Le giveaway a été lancé dans ${targetChannel} !`);
+                } catch (err) {
+                    console.error("[giveaway]", err);
+                    return message.channel.send("Impossible de lancer le giveaway (vérifiez les permissions du bot).");
                 }
-                return message.channel.send("Le giveaway a été lancé avec succès !");
             }
 
             const val = interaction.values?.[0];
@@ -268,7 +277,7 @@ module.exports = {
             if (val === "1") {
                 await interaction.deferUpdate().catch(() => null);
                 const q = await message.channel.send("Quel sera le nouveau gain du giveaway ?");
-                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id, max: 1, time: 60000 });
+                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id && m.channelId === message.channelId, max: 1, time: 60000 });
                 q.delete().catch(() => null);
                 if (responses.size > 0) {
                     const resp = responses.first();
@@ -285,7 +294,7 @@ module.exports = {
             if (val === "2") {
                 await interaction.deferUpdate().catch(() => null);
                 const q = await message.channel.send("Quelle sera la durée du giveaway ? (ex: `10h`, `1d`)");
-                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id, max: 1, time: 60000 });
+                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id && m.channelId === message.channelId, max: 1, time: 60000 });
                 q.delete().catch(() => null);
                 if (responses.size > 0) {
                     const resp = responses.first();
@@ -320,7 +329,7 @@ module.exports = {
             if (val === "4") {
                 await interaction.deferUpdate().catch(() => null);
                 const q = await message.channel.send("Combien de gagnants pour le giveaway ?");
-                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id, max: 1, time: 60000 });
+                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id && m.channelId === message.channelId, max: 1, time: 60000 });
                 q.delete().catch(() => null);
                 if (responses.size > 0) {
                     const resp = responses.first();
@@ -340,7 +349,7 @@ module.exports = {
             if (val === "5") {
                 await interaction.deferUpdate().catch(() => null);
                 const q = await message.channel.send("Quel émoji utiliser pour le giveaway ?");
-                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id, max: 1, time: 60000 });
+                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id && m.channelId === message.channelId, max: 1, time: 60000 });
                 q.delete().catch(() => null);
                 if (responses.size > 0) {
                     const resp = responses.first();
@@ -357,7 +366,7 @@ module.exports = {
             if (val === "11") {
                 await interaction.deferUpdate().catch(() => null);
                 const q = await message.channel.send("Quel sera le texte du bouton ? (ou `none`)");
-                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id, max: 1, time: 60000 });
+                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id && m.channelId === message.channelId, max: 1, time: 60000 });
                 q.delete().catch(() => null);
                 if (responses.size > 0) {
                     const resp = responses.first();
@@ -419,7 +428,7 @@ module.exports = {
             if (val === "9") {
                 await interaction.deferUpdate().catch(() => null);
                 const q = await message.channel.send("Envoyez les IDs ou liens d'invitation des serveurs requis (séparés par un espace, ou `none`)");
-                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id, max: 1, time: 60000 });
+                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id && m.channelId === message.channelId, max: 1, time: 60000 });
                 q.delete().catch(() => null);
                 if (responses.size > 0) {
                     const resp = responses.first();
@@ -437,7 +446,7 @@ module.exports = {
             if (val === "10") {
                 await interaction.deferUpdate().catch(() => null);
                 const q = await message.channel.send("Mentionnez ou envoyez l'ID des membres imposés comme gagnants (ou `none`)");
-                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id, max: 1, time: 60000 });
+                const responses = await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id && m.channelId === message.channelId, max: 1, time: 60000 });
                 q.delete().catch(() => null);
                 if (responses.size > 0) {
                     const resp = responses.first();

@@ -205,7 +205,7 @@ const db = {
 
         if (fs.existsSync(BLACKLIST_FILE)) {
             writeKey('blacklist', JSON.parse(fs.readFileSync(BLACKLIST_FILE, 'utf8')));
-            fs.unlinkSync(BLACKLIST_FILE);
+            fs.renameSync(BLACKLIST_FILE, `${BLACKLIST_FILE}.migrated.bak`);
         } else if (!fs.existsSync(keyToFile('blacklist'))) {
             writeKey('blacklist', {});
         }
@@ -216,13 +216,13 @@ const db = {
                 const guildId = path.basename(file, '.json');
                 const filePath = path.join(SERVEURS_DIR, file);
                 writeKey(`guild:${guildId}`, JSON.parse(fs.readFileSync(filePath, 'utf8')));
-                fs.unlinkSync(filePath);
+                fs.renameSync(filePath, `${filePath}.migrated.bak`);
             }
         }
 
         if (fs.existsSync(GIVEAWAYS_FILE)) {
             writeKey('giveaways', JSON.parse(fs.readFileSync(GIVEAWAYS_FILE, 'utf8')));
-            fs.unlinkSync(GIVEAWAYS_FILE);
+            fs.renameSync(GIVEAWAYS_FILE, `${GIVEAWAYS_FILE}.migrated.bak`);
         } else if (!fs.existsSync(keyToFile('giveaways'))) {
             writeKey('giveaways', []);
         }

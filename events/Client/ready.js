@@ -10,6 +10,10 @@ module.exports = {
     async execute(client) {
         console.log(`[+] ${client.user.username} (${client.user.id}) est prêt | ${client.guilds.cache.size.toLocaleString('fr-FR')} serveurs | ${client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0).toLocaleString('fr-FR')} utilisateurs`);
 
+        if (client.giveawaysManager?._init) {
+            await client.giveawaysManager._init().catch(err => console.error('[giveaways]', err));
+        }
+
         for (const g of client.guilds.cache.values()) {
             g.channels.cache.filter(channel => channel.type === ChannelType.GuildCategory).forEach(categoryChannel => {
                 client.cachedPositions.set(categoryChannel.id, categoryChannel.position);
@@ -45,6 +49,8 @@ module.exports = {
 
             // client.get() complète déjà les clés manquantes avec serveurs/example.json.
             const db = client.get(g.id);
+            db.invites ??= {};
+            db.tempban ??= [];
             let changed = false;
 
             try {

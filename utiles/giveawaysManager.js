@@ -8,7 +8,9 @@ class JsonGiveawaysManager extends GiveawaysManager {
 
     async saveGiveaway(messageId, giveawayData) {
         const giveaways = (await db.get('giveaways')) || [];
-        giveaways.push(giveawayData);
+        const index = giveaways.findIndex(g => g.messageId === messageId);
+        if (index !== -1) giveaways[index] = giveawayData;
+        else giveaways.push(giveawayData);
         await db.set('giveaways', giveaways);
         return true;
     }

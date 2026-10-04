@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder, Client, Message } = require("discord.js");
+const { EmbedBuilder, Client, Message } = require("discord.js");
 
 const varsbadge = {
     'HypeSquadOnlineHouse1': "HypeSquad Bravery",
@@ -6,16 +6,14 @@ const varsbadge = {
     'HypeSquadOnlineHouse3': "HypeSquad Balance",
     'HypeSquadEvents': "HypeSquad Event",
     'ActiveDeveloper': 'Active Developer',
-    'BugHunterLeve1': 'Bug Hunter Level 1',
+    'BugHunterLevel1': 'Bug Hunter Level 1',
     'EarlySupporter': 'Early Supporter',
-    'VerifiedBotDeveloper': 'Verified Bot Developer',
-    'EarlyVerifiedBotDeveloper': "Early Verified Bot Developer",
-    'VerifiedBot': "Verified Bot",
-    'PartneredServerOwner': "Partnered Server Owner",
+    'VerifiedDeveloper': 'Verified Bot Developer',
+    'PremiumEarlySupporter': 'Early Supporter',
     'Staff': "Discord Staff",
-    'System': "Discord System",
+    'Partner': "Partnered Server Owner",
     'BugHunterLevel2': 'Bug Hunter Level 2',
-}
+};
 
 module.exports = {
     name: "user",
@@ -32,25 +30,41 @@ module.exports = {
      * @param {Message} message
      * @param {string[]} args
     */
-    
     async execute(client, message, args) {
         const db = client.get(message.guildId);
-        let user = message.mentions.users.first() || client.users.cache.get(args[0]) || await client.users.fetch(args[0]).catch(() => null);
-        if (!user || !args[0]) user = message.author;
- 
-        await user.fetch();
+        const raw = args[0] ? (client.resolvers.extractId(args[0]) || args[0]) : null;
+        let user = message.mentions.users.first()
+            || (raw ? client.users.cache.get(raw) : null)
+            || (raw ? await client.users.fetch(raw).catch(() => null) : null);
+        if (!user) user = message.author;
+
+        await user.fetch().catch(() => null);
+        const member = message.guild.members.cache.get(user.id)
+            || await message.guild.members.fetch(user.id).catch(() => null);
+        const displayName = member?.displayName ?? user.globalName ?? user.username;
+        const flagList = user.flags?.toArray?.() ?? [];
+        const badges = flagList.length === 0
+            ? "`Aucun badge`"
+            : flagList.map(r => `\`${varsbadge[r] ?? r}\``).join(', ');
+
+        let commonGuilds = 0;
+        for (const g of client.guilds.cache.values()) {
+            if (g.members.cache.has(user.id)) commonGuilds++;
+            else if (await g.members.fetch(user.id).catch(() => null)) commonGuilds++;
+        }
+
         const embed = new EmbedBuilder()
             .setColor(db.color)
-            .setTitle(`Informations sur ${user.displayName}`)
+            .setTitle(`Informations sur ${displayName}`)
             .setThumbnail(user.displayAvatarURL())
             .setDescription(`\`👤\`・**__Informations sur l'utilisateur__**
-                > **Utilisateur**: ${user} (\`${user.displayName}\` | \`${user.id}\`)
+                > **Utilisateur**: ${user} (\`${displayName}\` | \`${user.id}\`)
                 > **Date de création:** <t:${Math.round(user.createdTimestamp / 1000)}:f> (<t:${Math.round(user.createdTimestamp / 1000)}:R>)
                 > **Bot:** ${user.bot ? "`✅`" : "`❌`"}
-                > **Badges:** ${user.flags.toArray().length == 0 ? "`Aucun badge`" : user.flags.toArray().map(r => `\`${varsbadge[r]}\``).join(', ')}
-                > **Serveurs en communs:** \`${client.guilds.cache.filter(g => g.members.cache.has(user.id)).size}\``.replaceAll('                ', ''))
+                > **Badges:** ${badges}
+                > **Serveurs en communs:** \`${commonGuilds}\``.replaceAll('                ', ''));
 
         if (user.banner) embed.setImage(user.bannerURL({ size: 4096 }));
-        message.channel.send({ embeds: [ embed ] })
+        message.channel.send({ embeds: [embed] });
     },
-}
+};

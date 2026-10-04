@@ -20,6 +20,9 @@ module.exports = {
         if (!user || !args[0]) user = message.author;
 
         const res = await fetch(api + user.id).then(r => r.json()).catch(() => null);
+        if (!res || typeof res !== "object" || Array.isArray(res)) {
+            return message.channel.send("Impossible de récupérer les anciens pseudos pour cet utilisateur.");
+        }
         const data = Object.entries(res)
         .sort(([, a], [, b]) => b - a)
         .reduce((acc, [k, v]) => {

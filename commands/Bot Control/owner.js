@@ -20,7 +20,7 @@ module.exports = {
 
         if (!user) return message.channel.send(`Aucun utilisateur de trouvé pour \`${args[0] ?? "rien"}\``);
         if (client.isBuyer(user.id)) return message.channel.send(`${user.displayName} est déjà le **buyer**`);
-        if (client.config.owners.includes(user.id)) return message.channel.send(`${user.displayName} est déjà owner`);
+        if ((client.config.owners || []).includes(user.id)) return message.channel.send(`${user.displayName} est déjà owner`);
 
         client.config.owners.push(user.id);
         client.saveConfig();

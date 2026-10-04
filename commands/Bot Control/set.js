@@ -16,7 +16,7 @@ module.exports = {
     async execute(client, message, args) {
         const db = client.get(message.guildId);
         let link = null;
-        const isOwner = client.config.owners.includes(message.author.id) || client.config.buyer === message.author.id;
+        const isOwner = (client.config.owners || []).includes(message.author.id) || client.config.buyer === message.author.id;
 
         if (args[0] === 'perm') {
             if (!client.perm(8, message.author.id, message.channel.id, message.guild) && !isOwner) return;

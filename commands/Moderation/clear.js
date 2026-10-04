@@ -21,7 +21,7 @@ module.exports = {
         switch (args[0]) {
             case 'status':
             case 'activity':
-                if (!client.config.owners.includes(message.author.id)) return;
+                if (!(client.config.owners || []).includes(message.author.id)) return;
                 client.config.presence.name = null;
                 client.config.presence.type = null;
                 client.saveConfig();
@@ -85,7 +85,7 @@ module.exports = {
                 return message.channel.send("Toutes les permissions du bot ont été **supprimées**");
 
             case 'owners':
-                if (!client.config.owners.includes(message.author.id) && client.config.buyer !== message.author.id) return;
+                if (!(client.config.owners || []).includes(message.author.id) && client.config.buyer !== message.author.id) return;
                 db.owners = [];
                 client.config.owners = client.config.buyer ? [client.config.buyer] : [];
                 client.save(message.guildId);
@@ -93,7 +93,7 @@ module.exports = {
                 return message.channel.send("Tous les owners du bot ont été **supprimés**");
 
             case 'bl': {
-                if (!client.config.owners.includes(message.author.id) && client.config.buyer !== message.author.id) return;
+                if (!(client.config.owners || []).includes(message.author.id) && client.config.buyer !== message.author.id) return;
                 const bl = client.getBlacklist();
                 const count = Object.keys(bl).length;
                 for (const key of Object.keys(bl)) delete bl[key];

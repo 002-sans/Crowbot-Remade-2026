@@ -21,7 +21,8 @@ module.exports = {
 
         // clone() recopie déjà nom, type, topic, nsfw, bitrate, userLimit, slowmode,
         // catégorie, position et permissions : ne rien passer évite de les écraser.
-        const newChannel = await channel.clone({ reason: `Renew demandé par ${message.author.tag}` })
-        channel.delete().catch(() => newChannel.delete().catch(() => null))
+        const newChannel = await channel.clone({ reason: `Renew demandé par ${message.author.tag}` });
+        await channel.delete().catch(() => newChannel.delete().catch(() => null));
+        newChannel.send(`Le salon a été renouvelé par ${message.author}.`).catch(() => null);
     },
 }

@@ -9,12 +9,7 @@ module.exports = {
     async execute(client, message) {
         if (!message.inGuild() || message.author.bot) return;
         const db = client.get(message.guildId);
-        const dbPrefix = db.prefix || client.config.prefix || '+';
-        
-        let usedPrefix = null;
-        if (message.content.startsWith(dbPrefix)) usedPrefix = dbPrefix;
-        else if (message.content.startsWith('+')) usedPrefix = '+';
-        else if (message.content.startsWith('!')) usedPrefix = '!';
+        const dbPrefix = db.prefix ?? client.config.prefix ?? '+';
 
         if (message.content === `<@${client.user.id}>`){
             const embed = new EmbedBuilder()
@@ -24,9 +19,9 @@ module.exports = {
             return message.channel.send({ embeds: [ embed ] });
         }
 
-        if (!usedPrefix) return;
+        if (!message.content.startsWith(dbPrefix)) return;
 
-        const input = message.content.slice(usedPrefix.length).trim();
+        const input = message.content.slice(dbPrefix.length).trim();
         let args = input.split(/ +/);
         let commandName = args.shift().toLowerCase();
         let command = client.commands.get(commandName)
@@ -201,7 +196,12 @@ module.exports = {
             if (db.perms?.no?.includes(command.name)) return;
         }
 
-        command.execute(client, message, args, db);
-        console.log(`[CMD] ${message.guild.name} | ${message.channel.name} | ${message.author.displayName} | ${command.name}`);
+        try {
+            await command.execute(client, message, args, db);
+            console.log(`[CMD] ${message.guild.name} | ${message.channel.name} | ${message.author.displayName} | ${command.name}`);
+        } catch (err) {
+            console.error(`[CMD-ERR] ${command.name}`, err);
+            message.channel.send("Une erreur est survenue lors de l'exécution de la commande.").catch(() => null);
+        }
     }
 }

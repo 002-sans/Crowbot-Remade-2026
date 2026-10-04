@@ -18,9 +18,13 @@ module.exports = {
     async execute(client, message, args) {
         if (!args[0]) return;
         const db = client.get(message.guildId);
-        const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || await message.guild.members.fetch(args[0]).catch(() => null);
+        const raw = client.resolvers.extractId(args[0]) || args[0];
+        const member = message.mentions.members.first()
+            || message.guild.members.cache.get(raw)
+            || await message.guild.members.fetch(raw).catch(() => null);
         if (!member) return message.channel.send(`Aucun membres trouvé pour \`${args[0]}\``);
-        
+
+        if (!Array.isArray(db.warns)) db.warns = [];
         const warns = db.warns.filter(c => c.id == member.id);
         const embed = new EmbedBuilder()
             .setAuthor({ name: member.user.username, iconURL: member.user.displayAvatarURL() })

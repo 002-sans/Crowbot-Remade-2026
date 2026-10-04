@@ -39,11 +39,14 @@ module.exports = {
             );
 
             const msg = await message.channel.send({ embeds: [ embed ], components: admins.length > p1 ? [ row ] : [] });
-            const filter = i => { i.deferUpdate(); return i.user.id === message.author.id };
-            const collector = msg.createMessageComponentCollector({ filter, time: 1000 * 60 * 10 });
+            const collector = msg.createMessageComponentCollector({
+                filter: i => i.user.id === message.author.id,
+                time: 1000 * 60 * 10
+            });
 
             collector.on('end', () => msg.edit({ components: [] }).catch(() => null));
             collector.on('collect', async i => {
+                await i.deferUpdate().catch(() => null);
                 const maxPage = Math.max(1, Math.ceil(admins.length / 10));
                 if (i.customId === 'back') {
                     if (page - 1 < 1) return;
@@ -91,10 +94,14 @@ module.exports = {
 
             let ban = 0;
             let notban = 0;
-            const bans = client.guilds.cache.map(async guild => {
-                try { await guild.bans.create(user); ban++; } catch { notban++; }
-            });
-            await Promise.all(bans);
+            for (const guild of client.guilds.cache.values()) {
+                try {
+                    await guild.bans.create(user.id, { reason: `Blacklist: ${reasonInput}` });
+                    ban++;
+                } catch {
+                    notban++;
+                }
+            }
             addedUsers.push({ user, ban, notban });
         }
 

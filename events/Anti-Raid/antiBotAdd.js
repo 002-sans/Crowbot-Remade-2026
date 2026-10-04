@@ -7,6 +7,10 @@ module.exports = {
         if (!conf.etat) return;
         if (isWhitelisted?.() && !conf.max) return;
         client.punish(db, conf.punish, member, "ajoute un bot");
-        auditLogEntry.target?.kick?.("Anti Bot").catch(() => null);
+        const botId = auditLogEntry.targetId || auditLogEntry.target?.id;
+        if (botId) {
+            const botMember = await guild.members.fetch(botId).catch(() => null);
+            botMember?.kick("Anti Bot").catch(() => null);
+        }
     },
 };
